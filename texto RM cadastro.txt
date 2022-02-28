@@ -1,0 +1,222 @@
+O detalhamento das atividades para requisição de mudança da visão Cadastro estão descritas e disponíveis (com imagens) no Caminho do ClearCase: SICRM\05-Implantacao\RequisicoesMudanca\RM18926003
+
+
+Detalhatamento de atividades Plataforma NT / Linux / VMS / Ponta Cliente
+1.1	Importação de notebooks Databricks (Subscrição produtiva SICRM)
+1.2	Importação de cadeia do CONTROL-M
+2.	Configurar JOBs
+3.	Importação para o CONTROL-M
+
+1	Importar os notebooks para o ambiente PRD
+
+	Na página inicial do Azure Databricks ou no link, verifique na subscrição produtiva do SICRM verifique se o workspace ws-databricks-prd está ativo. Caso não esteja, clique em Iniciar o Workspace.
+Ao iniciar, acesse a opção Workspace no menu lateral, selecione a opção drop down do diretório Shared e navegue até Import. 
+Os caminhos dos arquivos .dbc constam abaixo:
+SICRM\05-Implantacao\RequisicoesMudanca\RM18926003
+Os arquivos que devem ser importados para o diretório Shared são:
+SICRM.dbc
+SICRM_Framework.dbc
+Como na imagem abaixo. 
+ 
+	
+Após a importação acima, acesse a opção Workspace no menu lateral, selecione a opção drop down do diretório Shared/SICRM/CI/Cadastro e navegue até Import. Como indicado na imagem abaixo. 
+ 
+	
+Com isso, será apresentado uma caixa de diálogo Import Notebooks, onde será necessário clicar na opção Drop file to upload, or browse. selecione os arquivos .dbc baixados do ClearCase e clicar na opção Import.
+Os caminhos dos arquivos .dbc constam abaixo:
+SICRM\05-Implantacao\RequisicoesMudanca\RM18926003
+Os arquivos que devem ser importados para o diretório Shared/SICRM/CI/Cadastro são:
+Visao_Cadastro_Cliente .dbc
+Visao_Chave_Cliente .dbc
+Visao_Cliente_COCLI .dbc
+Visao_Cliente_Nicho .dbc
+Visao_Cliente_Vinculo .dbc
+Selecione também a opção drop down do diretório Shared/SICRM/RTDM e navegue até Import. Como indicado na imagem abaixo. 
+OBS: Favor, deletar quaisquer arquivos que já estejam em produção dos listados no escopo dessa mudança.
+
+
+ 
+
+Com isso, será apresentado uma caixa de diálogo Import Notebooks, onde será necessário clicar na opção Drop file to upload, or browse. selecione os arquivos .dbc baixados do ClearCase e clicar na opção Import.
+Os caminhos dos arquivos .dbc constam abaixo:
+SICRM\05-Implantacao\RequisicoesMudanca\RM18926003
+Os arquivos que devem ser importados para o diretório Shared/SICRM/RTDM são:
+Decisao_Cartao.dbc
+Decisao_Cartao_Proposta.dbc
+Decisao_Cliente.dbc
+Decisao_Cliente_Nicho.dbc
+Decisao_Cliente_Empro.dbc
+Decisao_Conta.dbc
+Decisao_Conta_Salario.dbc
+Decisao_Fatura_Cartao.dbc
+Decisao_Operacao.dbc
+Decisao_Pre_Aprovado.dbc
+Decisao_Restricao.dbc
+Decisao_Tomador.dbc
+	Após importação dos arquivos o diretório Shared deverá conter as pastas SICRM e SICRM_Framework, como mostra a imagem abaixo:
+OBS: Favor, deletar quaisquer arquivos que já estejam em produção dos listados no escopo dessa mudança.
+
+
+2	. Configurar JOBs
+Na página do DATABRICKS, acesse a opção Jobs no menu lateral.
+ 
+
+
+Em seguida clique na opção Create Job
+
+ 
+Na janela que vai se abrir, preencha o campo Task name com “SICRM_Chave_Cliente”. Em seguida clique no menu Select Notebook e abra o caminho /Shared/SICRM/CI/Cadastro/Visao_Chave_Cliente.
+  
+
+Após a seleção do notebook, o cluster deverá ser configurado. Clique no menu drop-down.
+ 
+
+ 
+Na nova janela, configure o cluster:
+ 
+Verifique as seguintes opções:
+ Enable autoscaling (Habilitado); 
+Min workers  (igual a 1) ;
+Max workers  (Igual a 16);
+Spot instances (Habilitado).
+
+Nas opções avançadas da configuração do cluster:
+ Spark config (Habilitado);
+
+ 
+
+Verifique se o comando abaixo está contido na caixa de texto
+
+OBS: Caso já exista o Cluster, favor deletar para então criar conforme abaixo.
+
+spark.storageread {{secrets/PRD/storageread}}
+spark.storageaccount {{secrets/PRD/storageaccount}}
+spark.SQLServerPortCI {{secrets/PRD/SQLServerPortCI}}
+spark.mountpoint {{secrets/PRD/mountpoint}}
+spark.SQLServerUser {{secrets/PRD/SQLServerUser}}
+spark.SQLServerPortRTDM {{secrets/PRD/SQLServerPortRTDM}}
+spark.SQLServerIPCI {{secrets/PRD/SQLServerIPCI}}
+spark.SQLServerIPRTDM {{secrets/PRD/SQLServerIPRTDM}}
+spark.blobcontainer {{secrets/PRD/blobcontainer}}
+spark.storagewrite {{secrets/PRD/storagewrite}}
+spark.SQLServerPassword {{secrets/PRD/SQLServerPassword}}
+
+Após a adição do texto, verifique as seguintes opções:
+ Confirm (Para finalizar a criação do job);
+Advanced options;
+ Add dependente libraries.
+Conforme imagem abaixo.
+ 
+
+Uma nova janela irá se abrir, verifique as seguintes opções: 
+ Maven;
+Coordinates (Inserir com.microsoft.azure:spark-mssql-connector_2.12:1.2.0 )
+Add.
+
+ 
+Por fim, clique em Create.
+ 
+OBS: Caso já exista uma Task name criada, favor deletar e criar de acordo com o comando acima.
+ Na sequência, verifique se a tela, similar à mostrada abaixo, será exibida:
+ 
+
+ 
+Em seguida, é necessário retornar à página inicial dos Jobs utilizando o menu lateral, onde agora será exibida a lista com todos os Jobs:
+ 
+SICRM_Chave_Cliente                     2838
+SICRM_Cadastro_Cliente	          2852                               
+SICRM_Cliente_COCLI	                  2864                                      
+SICRM_Cliente_Nicho	                  2887                           
+SICRM_Cliente_Vinculo	                  2897                            
+
+SICRM_Decisao_Cartao	                  3413                            
+SICRM_Decisao_Cliente	          3503                           
+SICRM_Decisao_Cliente_Nicho	  3535                            
+SICRM_Decisao_Cntro_Empro	  3554                            
+SICRM_Decisao_Conta	                  3566                            
+SICRM_Decisao_Conta_Salario	  3657                           
+SICRM_Decisao_Fatura_Cartao	  3726                            
+SICRM_Decisao_Operacao	          3739                           
+SICRM_Decisao_Pre_Aprovado	  3814
+SICRM_Decisao_Restricao              3906
+SICRM_Decisao_Restricao              3978
+                            
+
+ 
+
+Anote o Job ID respectivo para a configuração do Control-M nos passos seguintes.
+
+Repita o processo para os demais notebooks conforme a tabela abaixo:
+
+Task name	                                                               Notebook
+SICRM_Chave_Cliente	                                              /Shared/SICRM/CI/Cadastro/Visao_Chave_Cliente
+SICRM_Cadastro_Cliente	                                      /Shared/SICRM/CI/Cadastro/Visao_Cadastro_Cliente
+SICRM_Cliente_COCLI	                                              /Shared/SICRM/CI/Cadastro/Visao_Cliente_COCLI
+SICRM_Cliente_Nicho	                                              /Shared/SICRM/CI/Cadastro/Visao_Cliente_Nicho
+SICRM_Cliente_Vinculo	                                              /Shared/SICRM/CI/Cadastro/Visao_Cliente_Vinculo
+SICRM_Decisao_Cartao	                                              /Shared/SICRM/RTDM/Decisao_Cartao
+SICRM_Decisao_Cliente	                                      /Shared/SICRM/RTDM/Decisao_Cliente
+SICRM_Decisao_Cliente_Nicho	                              /Shared/SICRM/RTDM/Decisao_Cliente_Nicho
+SICRM_Decisao_Cntro_Empro	                              /Shared/SICRM/RTDM/Decisao_Cntro_Empro
+SICRM_Decisao_Conta	                                              /Shared/SICRM/RTDM/Decisao_Conta
+SICRM_Decisao_Conta_Salario	                              /Shared/SICRM/RTDM/Decisao_Conta_Salario
+SICRM_Decisao_Fatura_Cartao	                              /Shared/SICRM/RTDM/Decisao_Fatura_Cartao
+SICRM_Decisao_Operacao	                                      /Shared/SICRM/RTDM/Decisao_Operacao
+SICRM_Decisao_Pre_Aprovado	                              /Shared/SICRM/RTDM/Decisao_Pre_Aprovado
+SICRM_Decisao_Restricao	                                     /Shared/SICRM/RTDM/Decisao_Restricao
+SICRM_Decisao_Tomador                                           /Shared/SICRM/RTDM/Decisao_Tomador
+
+
+Observação: O Job SICRM_Chave_Cliente foi criado na demonstração do processo.
+
+
+ 
+3	. Configuração do servidor LINUX
+
+Para esta etapa, o token de acesso ao databricks deve ser gerado. Para tal, deve ser selecionado a opção Settings no menu lateral e em seguida clique em User Settings.
+ 
+Na nova janela, clique em Generate New Token.
+ 
+ 
+No campo Comment deve digitar “CONTROL-M”. O campo Lifetime (days) deverá ser configurado conforme a política vigente da área de segurança. Em seguida clique em Generate.
+ 
+Será mostrada uma nova janela pop-up com o token de acesso. Copie o token e cole em um editor de texto, como o bloco de notas. Após clicar em Done o token não será mais exibido.
+ 
+Agora, entre os arquivos baixados do ClearCase, abra o arquivo sicrm.ini com o bloco de notas.
+
+Caminho do arquivo sicrm.ini:
+SICRM\05-Implantacao\RequisicoesMudanca\RM18926003
+
+ 
+No campo proxy:
+ Adicionar o proxy de PRD (verifique com a TI da CAIXA);
+No campo token_databricks:
+Adicionar o token gerado no passo anterior
+No campo url:
+ Adicionar a url do databricks de PRD. Observação a url vai do https:// até o .net (por exemplo https://adb-7374611353987516.16.azuredatabricks.net).
+
+Após editar o arquivo sicrm.ini, deve ser feito o upload junto com o arquivo sicrm_databricks.sh para o servidor Linux.
+
+Caminho do arquivo sicrm_databricks.sh:
+
+SICRM\05-Implantacao\RequisicoesMudanca\RM18926003
+
+4	Importação para o Control-M
+
+Favor, importar o .xml que está no ClearCase no caminho abaixo:
+
+SICRM\05-Implantacao\RequisicoesMudanca\RM18926003
+Observação: Favor, deletar qualquer cadeia que já exista em produção e substituir pelos .xml disponibilizados.
+
+	Ao abrir o JOB, clique na janela de cada visão e configure a job. Clique na janela da visão (1), em seguida clique no ícone de edição de job (2) para inserir o JOBID, como mostra a imagem abaixo.
+
+
+
+Adicione o JOBID (Obtido anteriormente no Databricks) para cada visão e clique em OK, como mostra a imagem seguinte.
+ 
+Na sequência, clique em Validate e em seguida Check In. Como mostra a imagem abaixo.
+Observação: Caso houver JOBID preenchida, substituir qualquer valor já existente.
+
+Clique em Yes.
+ 
+
